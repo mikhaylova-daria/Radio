@@ -24,7 +24,7 @@ int main()
         cin >> cmd;
         if (cmd == "GET"){
             set<pair <int, int>, classcomp>::iterator itr = track.begin();
-            if (itr->second != -1) {
+            if (itr->second > -1) {
                 int track_id = itr->first;
                 int track_score = itr->second;
                 cout << track_id << " " << track_score <<endl;
@@ -35,7 +35,7 @@ int main()
                cout << min_track_id_has_null_score << " " << 0 <<endl;
                track.insert(pair <int, int> (min_track_id_has_null_score, -1));
                track_map.insert(pair<int, int> (min_track_id_has_null_score, -1));
-               while (track.count(pair <int, int> (min_track_id_has_null_score, -1)) > 0){
+               while (track_map.count(min_track_id_has_null_score) > 0){
                     ++min_track_id_has_null_score;
                }
             }

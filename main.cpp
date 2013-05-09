@@ -24,20 +24,25 @@ int main()
         cin >> cmd;
         if (cmd == "GET"){
             set<pair <int, int>, classcomp>::iterator itr = track.begin();
-            if (itr->second > -1) {
+            if ((itr->second > -1) && (itr->second != 0)) {
                 int track_id = itr->first;
                 int track_score = itr->second;
-                cout << track_id << " " << track_score <<endl;
-                track.erase(itr);
-                track.insert(pair<int, int> (track_id, -1));
-                track_map.find(track_id) -> second = -1;
+                    cout << track_id << " " << track_score <<'\n';
+                    track.erase(itr);
+                    track.insert(pair<int, int> (track_id, -1));
+                    track_map.find(track_id) -> second = -1;
             } else {
-               cout << min_track_id_has_null_score << " " << 0 <<endl;
+               cout << min_track_id_has_null_score << " " << 0 << endl;
                track.insert(pair <int, int> (min_track_id_has_null_score, -1));
                track_map.insert(pair<int, int> (min_track_id_has_null_score, -1));
-               while (track_map.count(min_track_id_has_null_score) > 0){
-                    ++min_track_id_has_null_score;
-               }
+               map<int, int>::iterator find_pair = track_map.find(min_track_id_has_null_score);
+               do {
+                   ++min_track_id_has_null_score;
+                   find_pair = track_map.find(min_track_id_has_null_score);
+                   if (find_pair == track_map.end()) {
+                       break;
+                   }
+               } while (find_pair->second != 0);
             }
         }
         if (cmd == "VOTE") {
@@ -69,7 +74,12 @@ int main()
                  itr_map_track->second += score;
                  track.insert(pair <int, int> (*itr_map_track));
              }
-             cout << itr_map_track->second << endl;// выдаём текущий рейтинг
+             cout << itr_map_track->second << '\n';// выдаём текущий рейтинг
+             if (itr_map_track->second == 0) {
+                 if (min_track_id_has_null_score > itr_map_track->first) {
+                     min_track_id_has_null_score = itr_map_track->first;
+                 }
+             }
         }
         if(cmd == "EXIT") {
             cout<< "OK";

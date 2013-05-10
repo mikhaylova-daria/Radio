@@ -24,17 +24,26 @@ int main()
         cin >> cmd;
         if (cmd == "GET"){
             set<pair <int, int>, classcomp>::iterator itr = track.begin();
-            if ((itr->second > -1) && (itr->second != 0)) {
-                int track_id = itr->first;
-                int track_score = itr->second;
+            int track_id = itr->first;
+            int track_score = itr->second;
+            if (itr->second > 0) {
                     cout << track_id << " " << track_score <<'\n';
                     track.erase(itr);
                     track.insert(pair<int, int> (track_id, -1));
                     track_map.find(track_id) -> second = -1;
             } else {
+               if (itr->second == 0 && itr->first == min_track_id_has_null_score) {
+                        track.erase(itr);
+               }
+               track.insert(pair<int, int> (min_track_id_has_null_score, -1));
                cout << min_track_id_has_null_score << " " << 0 << endl;
                track.insert(pair <int, int> (min_track_id_has_null_score, -1));
-               track_map.insert(pair<int, int> (min_track_id_has_null_score, -1));
+               map<int, int>::iterator itr_map = track_map.find (min_track_id_has_null_score);
+               if (itr_map == track_map.end()) {
+                   track_map.insert(pair<int, int> (min_track_id_has_null_score, -1));
+               } else {
+                   itr_map->second = -1;
+               }
                map<int, int>::iterator find_pair = track_map.find(min_track_id_has_null_score);
                do {
                    ++min_track_id_has_null_score;
@@ -57,7 +66,7 @@ int main()
                 ip.insert(pair <string, int> (fun_ip, time));
                 flag_changing_of_score = true;
              } else {
-                if ((time - (itr_ip -> second)) > 600) {
+                if ((time - (itr_ip -> second)) >= 600) {
                      itr_ip->second = time;
                      flag_changing_of_score = true;
                 }
@@ -75,10 +84,21 @@ int main()
                  track.insert(pair <int, int> (*itr_map_track));
              }
              cout << itr_map_track->second << '\n';// выдаём текущий рейтинг
-             if (itr_map_track->second == 0) {
-                 if (min_track_id_has_null_score > itr_map_track->first) {
-                     min_track_id_has_null_score = itr_map_track->first;
-                 }
+             if ((itr_map_track->first == min_track_id_has_null_score) && (itr_map_track->second != 0)) {
+                 map<int, int>::iterator find_pair;
+                 do {
+                     ++min_track_id_has_null_score;
+                     find_pair = track_map.find(min_track_id_has_null_score);
+                     if (find_pair == track_map.end()) {
+                         break;
+                     }
+                 } while (find_pair->second != 0);
+             } else {
+                 if (itr_map_track->second == 0) {
+                     if (min_track_id_has_null_score > itr_map_track->first) {
+                         min_track_id_has_null_score = itr_map_track->first;
+                    }
+                }
              }
         }
         if(cmd == "EXIT") {
